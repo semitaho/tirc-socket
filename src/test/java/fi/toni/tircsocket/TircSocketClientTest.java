@@ -1,5 +1,6 @@
 package fi.toni.tircsocket;
 
+import fi.toni.tircsocket.client.TircSocketClientLoggerImpl;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -8,10 +9,10 @@ import org.junit.Test;
  */
 public class TircSocketClientTest {
 
-  private TircSocketClient client;
+  private TircSocketClientLoggerImpl client;
   @Before
   public void setup(){
-    client = new TircSocketClient();
+    client = new TircSocketClientLoggerImpl();
     client.postConstruct();
 
   }
@@ -19,8 +20,6 @@ public class TircSocketClientTest {
 
   @Test
   public void sendLine(){
-    client.sendNewLine();
-
 
   }
 
