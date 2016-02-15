@@ -11,12 +11,12 @@ public class PrivMessageFilter extends TextReceiverFilter {
     String text = textBuffer.substring(indexOf + 1);
     String nick = textBuffer.substring(textBuffer.indexOf(":") + 1,
             textBuffer.indexOf("!"));
-    IrcLine tircLine = new IrcLine();
+    IrcLine ircLine = new IrcLine();
     String formattedText = TircMessageFormatter.formatComment(text);
-    tircLine.setLine(formattedText);
-    tircLine.setType("comment");
-    tircLine.setNick(nick);
-    return tircLine;
+    ircLine.setLine(formattedText);
+    ircLine.setType("comment");
+    ircLine.setNick(nick);
+    return ircLine;
   }
 
   @Override
