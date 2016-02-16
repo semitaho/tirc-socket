@@ -1,4 +1,4 @@
-package fi.toni.tircsocket.dto;
+package fi.toni.tircsocket.dto.request;
 
 import java.io.Serializable;
 

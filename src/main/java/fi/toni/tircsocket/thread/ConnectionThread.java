@@ -3,8 +3,8 @@ package fi.toni.tircsocket.thread;
 import fi.toni.tircsocket.ConnectionClient;
 import fi.toni.tircsocket.TircConfiguration;
 import fi.toni.tircsocket.client.TircSocketClient;
-import fi.toni.tircsocket.dto.IrcLine;
-import fi.toni.tircsocket.dto.IrcUser;
+import fi.toni.tircsocket.dto.request.IrcLine;
+import fi.toni.tircsocket.dto.request.IrcUser;
 import fi.toni.tircsocket.filter.ActionFilter;
 import fi.toni.tircsocket.filter.ChanFilter;
 import fi.toni.tircsocket.filter.PrivMessageFilter;
@@ -13,7 +13,6 @@ import fi.toni.tircsocket.util.LogFileParser;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.AsyncRestTemplate;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -243,9 +242,7 @@ public class ConnectionThread extends Thread {
   }
 
   public void writeLine(String rivi) {
-    AsyncRestTemplate asyncRestTemplate = new AsyncRestTemplate();
     client.write(rivi + "\n");
-    //applyFilters(":" + nick + "! " + rivi);
   }
 
   public void writePrivateLine(String fromNick, String toNick, String rivi) {

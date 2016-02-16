@@ -1,7 +1,7 @@
 package fi.toni.tircsocket.client;
 
-import fi.toni.tircsocket.dto.IrcLine;
-import fi.toni.tircsocket.dto.IrcUser;
+import fi.toni.tircsocket.dto.request.IrcLine;
+import fi.toni.tircsocket.dto.request.IrcUser;
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

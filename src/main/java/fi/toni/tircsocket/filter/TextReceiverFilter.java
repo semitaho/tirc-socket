@@ -1,5 +1,5 @@
 package fi.toni.tircsocket.filter;
-import fi.toni.tircsocket.dto.IrcLine;
+import fi.toni.tircsocket.dto.request.IrcLine;
 
 
 /**

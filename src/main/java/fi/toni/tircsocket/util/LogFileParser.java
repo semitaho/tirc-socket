@@ -1,6 +1,6 @@
 package fi.toni.tircsocket.util;
 
-import fi.toni.tircsocket.dto.IrcUser;
+import fi.toni.tircsocket.dto.request.IrcUser;
 
 import java.util.HashMap;
 import java.util.Map;
