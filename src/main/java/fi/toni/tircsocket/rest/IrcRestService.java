@@ -1,5 +1,6 @@
 package fi.toni.tircsocket.rest;
 
+import fi.toni.tircsocket.dto.DataHolder;
 import fi.toni.tircsocket.dto.response.IrcText;
 import fi.toni.tircsocket.thread.ConnectionThread;
 import org.apache.log4j.Logger;
@@ -18,6 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class IrcRestService {
 
   static Logger log = Logger.getLogger(IrcRestService.class);
+
+
+  @Autowired
+  private DataHolder dataHolder;
 
   @Autowired
   private ConnectionThread cthread;
@@ -39,5 +44,11 @@ public class IrcRestService {
   public void join(@RequestBody IrcText text) {
     log.debug("JOIN to channel with nick: " + text.getNick());
     cthread.writeLine("PRIVMSG " + cthread.getChannel() + " :\u0001ACTION saapui paikalle nickillä " + text.getNick() + " " + text.getText());
+  }
+
+  @RequestMapping(value = "/asktopic", method = RequestMethod.GET)
+  public String askTopic() {
+    log.debug("ASK topic from irc: "+dataHolder.getTopic());
+    return dataHolder.getTopic();
   }
 }

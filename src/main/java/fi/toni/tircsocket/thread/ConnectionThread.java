@@ -3,6 +3,7 @@ package fi.toni.tircsocket.thread;
 import fi.toni.tircsocket.ConnectionClient;
 import fi.toni.tircsocket.TircConfiguration;
 import fi.toni.tircsocket.client.TircSocketClient;
+import fi.toni.tircsocket.dto.DataHolder;
 import fi.toni.tircsocket.dto.request.IrcLine;
 import fi.toni.tircsocket.dto.request.IrcUser;
 import fi.toni.tircsocket.filter.ActionFilter;
@@ -31,10 +32,12 @@ public class ConnectionThread extends Thread {
   protected InputStreamReader streamReader;
   private Socket socket;
   private String nick;
-  private String nicksId;
 
   @Autowired
   private TircSocketClient socketClient;
+
+  @Autowired
+  private DataHolder dataHolder;
 
   private List<TextReceiverFilter> filters = new ArrayList<TextReceiverFilter>();
   private Map<String, String> opFilters = new HashMap<>();
@@ -56,7 +59,6 @@ public class ConnectionThread extends Thread {
   private long NAMES_INTERVAL = 17000;
 
   private String channel;
-  private volatile Map<String, IrcUser> oldTircUsers;
   static Logger log = Logger.getLogger(ConnectionThread.class);
 
   public ConnectionThread() {
@@ -69,7 +71,6 @@ public class ConnectionThread extends Thread {
     whoisThread = new WhoisThread();
     NAMES_INTERVAL = instance.getNamesInterval();
     channel = instance.getChannel();
-    oldTircUsers = new HashMap<>();
     nick = instance.getProperty(TircConfiguration.TIRC_SERVER_NICK_KEY);
     registerFilters();
   }
@@ -89,7 +90,7 @@ public class ConnectionThread extends Thread {
   @Override
   public void run() {
     long names_interval = System.currentTimeMillis();
-     whoisThread.init(this);
+    whoisThread.init(this, dataHolder);
 
     String textBuffer = null;
     writeLine("PRIVMSG " + channel + " :" + instance.getProperty(TircConfiguration.TIRC_SERVER_JOIN_MESSAGE_KEY));
@@ -318,10 +319,10 @@ public class ConnectionThread extends Thread {
       String whoistarget = split[0];
       String secondStr = split[1];
       int second = Integer.parseInt(secondStr);
-      Map<String, IrcUser> users = getUsers();
+      Map<String, IrcUser> users = dataHolder.getUsers();
       if (users.containsKey(whoistarget)) {
         users.get(whoistarget).setIdleTime(second);
-        refreshUsers(users);
+        dataHolder.setUsers(users);
         socketClient.sendUsers(users);
       }
     } else if (isTopicLine(textBuffer, channel)) {
@@ -337,13 +338,14 @@ public class ConnectionThread extends Thread {
   private void processTopicLine(String textBuffer) {
     String topicStr = textBuffer.substring(textBuffer.indexOf(channel));
     topicStr = topicStr.substring(topicStr.indexOf(":") + 1);
+    dataHolder.setTopic(topicStr);
     socketClient.sendTopic(topicStr);
 
   }
 
   private void processNamesLine(String textBuffer) {
     Map<String, IrcUser> tircUserMap = LogFileParser
-            .parseNicksFromLine(getUsers(), textBuffer);
+            .parseNicksFromLine(dataHolder.getUsers(), textBuffer);
     socketClient.sendUsers(tircUserMap);
 
   }
@@ -356,28 +358,4 @@ public class ConnectionThread extends Thread {
     }
     return false;
   }
-
-  /**
-   * @return the nicksId
-   */
-  public String getNicksId() {
-    return nicksId;
-  }
-
-  /**
-   * @param nicksId the nicksId to set
-   */
-  public void setNicksId(String nicksId) {
-    this.nicksId = nicksId;
-  }
-
-  public Map<String, IrcUser> getUsers() {
-    return new HashMap<>(this.oldTircUsers);
-  }
-
-  public void refreshUsers(Map<String, IrcUser> users) {
-    this.oldTircUsers = users;
-
-  }
-
 }
