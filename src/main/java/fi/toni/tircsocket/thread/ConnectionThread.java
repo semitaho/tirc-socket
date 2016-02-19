@@ -74,7 +74,7 @@ public class ConnectionThread extends Thread {
     nick = instance.getProperty(TircConfiguration.TIRC_SERVER_NICK_KEY);
     registerFilters();
   }
-  
+
   private void registerFilters() {
     filters.add(new PrivMessageFilter());
     filters.add(new ChanFilter());
@@ -340,6 +340,7 @@ public class ConnectionThread extends Thread {
   private void processNamesLine(String textBuffer) {
     Map<String, IrcUser> tircUserMap = LogFileParser
             .parseNicksFromLine(dataHolder.getUsers(), textBuffer);
+    dataHolder.setUsers(tircUserMap);
     socketClient.sendUsers(tircUserMap);
 
   }
