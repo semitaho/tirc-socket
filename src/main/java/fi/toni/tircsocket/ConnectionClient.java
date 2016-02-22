@@ -7,10 +7,10 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author Toni
- *
  */
 public class ConnectionClient {
 
@@ -19,7 +19,7 @@ public class ConnectionClient {
   private ConnectionClient(Socket socket) {
     try {
       bw = new BufferedWriter(new OutputStreamWriter(
-              socket.getOutputStream()));
+              socket.getOutputStream(), StandardCharsets.UTF_8));
     } catch (IOException ioe) {
       throw new RuntimeException(ioe);
     }
