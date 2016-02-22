@@ -74,7 +74,7 @@ public class ConnectionThread extends Thread {
     nick = instance.getProperty(TircConfiguration.TIRC_SERVER_NICK_KEY);
     registerFilters();
   }
-  
+
   private void registerFilters() {
     filters.add(new PrivMessageFilter());
     filters.add(new ChanFilter());

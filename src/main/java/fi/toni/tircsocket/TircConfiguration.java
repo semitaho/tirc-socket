@@ -50,6 +50,7 @@ public class TircConfiguration {
 
   private String loadConfigurationIdentifier() {
     if (System.getenv("env") != null) {
+      log.debug("USING env variable: " + System.getenv("env"));
       return System.getenv("env");
     }
     return "dev";
