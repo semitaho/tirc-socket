@@ -340,6 +340,7 @@ public class ConnectionThread extends Thread {
   private void processNamesLine(String textBuffer) {
     Map<String, IrcUser> tircUserMap = LogFileParser
             .parseNicksFromLine(dataHolder.getUsers(), textBuffer);
+    dataHolder.setUsers(tircUserMap);
     socketClient.sendUsers(tircUserMap);
 
   }
