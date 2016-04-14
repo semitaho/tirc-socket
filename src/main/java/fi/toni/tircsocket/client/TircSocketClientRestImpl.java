@@ -23,7 +23,7 @@ import java.util.Map;
 public class TircSocketClientRestImpl implements TircSocketClient {
 
   static Logger log = Logger.getLogger(TircSocketClientRestImpl.class);
-  static final String DOMAIN = "http://localhost:8880";
+  static final String DOMAIN = "http://localhost:80";
   private static final String SOCKET_TEXT_URL = DOMAIN + "/irc/say";
   private static final String TOPIC_TEXT_URL = DOMAIN + "/irc/sendtopic";
   private static final String USERS_TEXT_URL = DOMAIN + "/irc/sendusers";
