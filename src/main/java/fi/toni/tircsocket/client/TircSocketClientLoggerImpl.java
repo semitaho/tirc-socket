@@ -2,11 +2,13 @@ package fi.toni.tircsocket.client;
 
 import fi.toni.tircsocket.dto.request.IrcLine;
 import fi.toni.tircsocket.dto.request.IrcUser;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.web.reactive.function.client.WebClientAutoConfiguration;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.web.client.AsyncRestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
@@ -16,16 +18,20 @@ import java.util.Map;
  * Created by taho on 14/02/16.
  */
 public class TircSocketClientLoggerImpl implements TircSocketClient {
-  static Logger log = Logger.getLogger(TircSocketClientLoggerImpl.class);
+  static Logger log = LoggerFactory.getLogger(TircSocketClientLoggerImpl.class);
 
 
   private static final String SOCKET_TEXT_URL = "http://ec2-54-77-146-105.eu-west-1.compute.amazonaws.com:8880/backend/say";
-  private AsyncRestTemplate template;
+  private WebClient webClient;
 
 
   @PostConstruct
   public void postConstruct() {
-    template = new AsyncRestTemplate();
+    webClient = WebClient.builder()
+        .baseUrl(SOCKET_TEXT_URL)
+        .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+        .build();
+
     log.debug("TEMPLATE created");
   }
 

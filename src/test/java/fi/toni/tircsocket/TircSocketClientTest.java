@@ -1,8 +1,8 @@
 package fi.toni.tircsocket;
 
 import fi.toni.tircsocket.client.TircSocketClientLoggerImpl;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Created by taho on 11/02/16.
@@ -10,7 +10,7 @@ import org.junit.Test;
 public class TircSocketClientTest {
 
   private TircSocketClientLoggerImpl client;
-  @Before
+  @BeforeEach
   public void setup(){
     client = new TircSocketClientLoggerImpl();
     client.postConstruct();

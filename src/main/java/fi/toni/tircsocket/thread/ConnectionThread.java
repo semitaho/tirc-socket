@@ -11,7 +11,8 @@ import fi.toni.tircsocket.filter.ChanFilter;
 import fi.toni.tircsocket.filter.PrivMessageFilter;
 import fi.toni.tircsocket.filter.TextReceiverFilter;
 import fi.toni.tircsocket.util.LogFileParser;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -59,7 +60,7 @@ public class ConnectionThread extends Thread {
   private long NAMES_INTERVAL = 17000;
 
   private String channel;
-  static Logger log = Logger.getLogger(ConnectionThread.class);
+  static Logger log = LoggerFactory.getLogger(ConnectionThread.class);
 
   public ConnectionThread() {
 
@@ -67,7 +68,7 @@ public class ConnectionThread extends Thread {
 
   @PostConstruct
   public void postConstruct() {
-    log.debug("instance: " + this.instance);
+    log.debug("instance: {}", this.instance);
     whoisThread = new WhoisThread();
     NAMES_INTERVAL = instance.getNamesInterval();
     channel = instance.getChannel();
@@ -156,8 +157,8 @@ public class ConnectionThread extends Thread {
 
         textBuilder.append(converChar);
       } while (chars != -1 && chars != 10);
-    } catch (IOException e) {
-      log.error(e.getMessage());
+    } catch (final IOException e) {
+      log.error("virhe", e);
       throw new RuntimeException(e);
     } finally {
     }
@@ -267,7 +268,7 @@ public class ConnectionThread extends Thread {
       log.debug("tIrc connection thread destroyed");
 
     } catch (IOException e) {
-      log.error(e);
+      log.error("virhe", e);
     }
 
   }

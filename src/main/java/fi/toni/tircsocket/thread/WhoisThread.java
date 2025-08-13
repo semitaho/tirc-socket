@@ -1,7 +1,8 @@
 package fi.toni.tircsocket.thread;
 
 import fi.toni.tircsocket.dto.DataHolder;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -10,7 +11,7 @@ public class WhoisThread {
 
   private int NEXT_WHOIS_INTERVAL = 4100;
   private long currentTime;
-  static Logger log = Logger.getLogger(WhoisThread.class);
+  static Logger log = LoggerFactory.getLogger(WhoisThread.class);
   private Iterator<String> whoisNicksIterator;
   private ConnectionThread thread;
   private DataHolder dataHolder;

@@ -7,8 +7,9 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import org.apache.log4j.Logger;
 import org.bson.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -24,7 +25,7 @@ import static com.mongodb.client.model.Filters.eq;
 public class MongoWrapper {
 
 
-  static Logger log = Logger.getLogger(MongoWrapper.class);
+  static Logger log = LoggerFactory.getLogger(MongoWrapper.class);
 
   public static final String COLLECTION_LOCATION = "location";
   public static final String COLLECTION_LOGS = "logs";
@@ -40,21 +41,9 @@ public class MongoWrapper {
   @PostConstruct
   public void postCreate() {
 
-    String textUri = "mongodb://tircuser:tirc123@ds037451.mongolab.com:37451/tirc";
-    MongoClientURI mongoClientURI = new MongoClientURI(textUri);
-    MongoClient mongoClient = new MongoClient(mongoClientURI);
-    tircDb = mongoClient.getDatabase("tirc");
 
   }
 
 
 
-
-  public Document loadConfiguration(String env) {
-    MongoCollection<Document> collection = tircDb
-            .getCollection(COLLECTION_CONFIGURATION);
-    Document doc = collection.find(eq("_id", env)).first();
-    return doc;
-
-  }
 }

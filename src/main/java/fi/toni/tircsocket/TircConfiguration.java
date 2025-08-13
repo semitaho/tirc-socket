@@ -1,12 +1,21 @@
 package fi.toni.tircsocket;
 
-import org.apache.log4j.Logger;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.firestore.Firestore;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+import com.google.firebase.cloud.FirestoreClient;
 import org.bson.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.io.FileInputStream;
+import java.io.InputStream;
 
 @Component
 public class TircConfiguration {
@@ -20,14 +29,13 @@ public class TircConfiguration {
   public static final String TIRC_INTERVAL_NAMES = "intervalnames";
   public static final String TIRC_INTERVAL_WHOIS = "intervalwhois";
 
-  static Logger log = Logger.getLogger(TircConfiguration.class);
+  static Logger log = LoggerFactory.getLogger(TircConfiguration.class);
 
   private String configuration;
 
-  private Document configurationModel;
 
   @Autowired
-  private MongoWrapper mongoWrapper;
+  private Firestore db;
 
 
   public TircConfiguration() {
@@ -38,9 +46,11 @@ public class TircConfiguration {
 
   @PostConstruct
   public void afterCreate() {
-    configurationModel = mongoWrapper.loadConfiguration(configuration);
+    db.collection("users");
+  //  configurationModel = mongoWrapper.loadConfiguration(configuration);
 
   }
+
 
   @SuppressWarnings("all")
   @PreDestroy
@@ -75,6 +85,6 @@ public class TircConfiguration {
   }
 
   public String getProperty(String propKey) {
-    return configurationModel.getString(propKey);
+    return "keijo";
   }
 }
