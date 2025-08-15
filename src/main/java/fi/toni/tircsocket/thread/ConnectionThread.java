@@ -93,6 +93,7 @@ public class ConnectionThread extends Thread {
       whoisThread.run();
       try {
         textBuffer = readLine();
+        System.out.println(textBuffer);
         if (System.currentTimeMillis() - names_interval > NAMES_INTERVAL
                 && textBuffer.contains(" 451 ") == false) {
           writeLine("NAMES " + channel);
@@ -191,8 +192,9 @@ public class ConnectionThread extends Thread {
 
     try {
 
+      final var host = instance.getProperty(TircConfiguration.TIRC_SERVER_HOST_KEY);
       socket = new Socket(
-              instance.getProperty(TircConfiguration.TIRC_SERVER_HOST_KEY),
+              host,
               DEFAULT_PORT);
 
       client = ConnectionClient.create(socket);

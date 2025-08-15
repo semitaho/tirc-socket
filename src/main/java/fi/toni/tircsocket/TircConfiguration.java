@@ -1,21 +1,18 @@
 package fi.toni.tircsocket;
 
-import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
-import com.google.firebase.cloud.FirestoreClient;
-import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.util.concurrent.ExecutionException;
+
+import static java.lang.System.getenv;
+import static java.util.Optional.ofNullable;
 
 @Component
 public class TircConfiguration {
@@ -31,8 +28,9 @@ public class TircConfiguration {
 
   static Logger log = LoggerFactory.getLogger(TircConfiguration.class);
 
-  private String configuration;
+  private final String configuration;
 
+  private DocumentSnapshot config;
 
   @Autowired
   private Firestore db;
@@ -40,14 +38,24 @@ public class TircConfiguration {
 
   public TircConfiguration() {
     configuration = loadConfigurationIdentifier();
-    log.info("Configuration loaded with environment: " + configuration);
+    log.info("Configuration loaded with environment: {}", configuration);
 
   }
 
   @PostConstruct
   public void afterCreate() {
-    db.collection("users");
-  //  configurationModel = mongoWrapper.loadConfiguration(configuration);
+    final var configRef = db.collection("configuration");
+    final var prodRef = configRef.document("prod");
+
+
+    try {
+      this.config = prodRef.get().get();
+
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    } catch (ExecutionException e) {
+      throw new RuntimeException(e);
+    }
 
   }
 
@@ -59,11 +67,10 @@ public class TircConfiguration {
   }
 
   private String loadConfigurationIdentifier() {
-    if (System.getenv("env") != null) {
-      log.debug("USING env variable: " + System.getenv("env"));
-      return System.getenv("env");
-    }
-    return "dev";
+    final var env = ofNullable(getenv("env"))
+            .orElse("prod");
+    log.info("USING env variable: {}", env);
+    return env;
   }
 
   public String getServerHost() {
@@ -71,13 +78,13 @@ public class TircConfiguration {
   }
 
   public Long getNamesInterval() {
-    String property = getProperty(TIRC_INTERVAL_NAMES);
-    return Long.valueOf(property);
+    final var propertyValue = config.getLong(TIRC_INTERVAL_NAMES);
+    return propertyValue;
 
   }
 
   public Integer getWhoisInterval() {
-    return Integer.valueOf(getProperty(TIRC_INTERVAL_WHOIS));
+    return config.getLong(TIRC_INTERVAL_WHOIS).intValue();
   }
 
   public String getChannel() {
@@ -85,6 +92,6 @@ public class TircConfiguration {
   }
 
   public String getProperty(String propKey) {
-    return "keijo";
+    return config.get(propKey, String.class);
   }
 }

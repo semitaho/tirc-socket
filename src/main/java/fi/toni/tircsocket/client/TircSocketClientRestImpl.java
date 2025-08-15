@@ -20,7 +20,6 @@ import java.util.Map;
  * Created by taho on 15/02/16.
  */
 
-@Component
 public class TircSocketClientRestImpl implements TircSocketClient {
 
   static Logger log = LoggerFactory.getLogger(TircSocketClientRestImpl.class);
