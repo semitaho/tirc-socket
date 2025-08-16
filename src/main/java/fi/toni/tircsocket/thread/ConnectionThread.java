@@ -22,12 +22,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 
 @Component
 public class ConnectionThread extends Thread {
 
-  public static final String THREAD_SERVICE = "EXECUTOR_THREAD";
+  public static final Logger log = LoggerFactory.getLogger(ConnectionThread.class);
 
   private ConnectionClient client;
   protected InputStreamReader streamReader;
@@ -40,8 +45,8 @@ public class ConnectionThread extends Thread {
   @Autowired
   private DataHolder dataHolder;
 
-  private List<TextReceiverFilter> filters = new ArrayList<TextReceiverFilter>();
-  private Map<String, String> opFilters = new HashMap<>();
+  private final List<TextReceiverFilter> filters = new ArrayList<TextReceiverFilter>();
+  private final Map<String, String> opFilters = new HashMap<>();
 
   {
     final String ANGERE = "a91-153-145";
@@ -60,7 +65,6 @@ public class ConnectionThread extends Thread {
   private long NAMES_INTERVAL = 17000;
 
   private String channel;
-  static Logger log = LoggerFactory.getLogger(ConnectionThread.class);
 
   public ConnectionThread() {
 
@@ -89,13 +93,13 @@ public class ConnectionThread extends Thread {
 
     String textBuffer = null;
     writeLine("PRIVMSG " + channel + " :" + instance.getProperty(TircConfiguration.TIRC_SERVER_JOIN_MESSAGE_KEY));
-    while (socket.isConnected() && socket.isClosed() == false) {
+    while (socket.isConnected() && !socket.isClosed()) {
       whoisThread.run();
       try {
         textBuffer = readLine();
         System.out.println(textBuffer);
         if (System.currentTimeMillis() - names_interval > NAMES_INTERVAL
-                && textBuffer.contains(" 451 ") == false) {
+                && !textBuffer.contains(" 451 ")) {
           writeLine("NAMES " + channel);
           names_interval = System.currentTimeMillis();
         }
@@ -139,10 +143,7 @@ public class ConnectionThread extends Thread {
   }
 
   private boolean skipChar(int chars) {
-    if (chars == 195) {
-      return true;
-    }
-    return false;
+    return chars == 195;
   }
 
   private String readLine() {
@@ -161,7 +162,6 @@ public class ConnectionThread extends Thread {
     } catch (final IOException e) {
       log.error("virhe", e);
       throw new RuntimeException(e);
-    } finally {
     }
     return textBuilder.toString();
 
@@ -173,18 +173,12 @@ public class ConnectionThread extends Thread {
 
   private final boolean isWhoisLine(String textBuffer, String nick) {
     final String SEARCHED_TEXT_PHRASE = " 317 " + nick + " ";
-    if (textBuffer.contains(SEARCHED_TEXT_PHRASE)) {
-      return true;
-    }
-    return false;
+    return textBuffer.contains(SEARCHED_TEXT_PHRASE);
   }
 
   public boolean isNamesLine(String channel, String nick, String textBuffer) {
-    if (textBuffer.contains(channel) && textBuffer.contains(nick)
-            && textBuffer.contains("353")) {
-      return true;
-    }
-    return false;
+    return textBuffer.contains(channel) && textBuffer.contains(nick)
+            && textBuffer.contains("353");
   }
 
   public boolean connect() throws RuntimeException {
@@ -218,7 +212,7 @@ public class ConnectionThread extends Thread {
         throw new RuntimeException("", e);
       }
 
-      while (socket.isConnected() && socket.isClosed() == false) {
+      while (socket.isConnected() && !socket.isClosed()) {
         try {
           streamReader.read();
           try {
@@ -240,6 +234,7 @@ public class ConnectionThread extends Thread {
   }
 
   public void writeLine(String rivi) {
+    log.info(rivi);
     client.write(rivi + "\n");
   }
 
@@ -288,7 +283,7 @@ public class ConnectionThread extends Thread {
   }
 
   private final boolean applyActions(String textBuffer) {
-    if (textBuffer.contains("PRIVMSG") == false
+    if (!textBuffer.contains("PRIVMSG")
             && (textBuffer == null || textBuffer.contains("null"))) {
       return false;
     }
@@ -349,11 +344,8 @@ public class ConnectionThread extends Thread {
   }
 
   private boolean isTopicLine(String textBuffer, String channel) {
-    if (textBuffer.contains(channel)
+    return textBuffer.contains(channel)
             && (textBuffer.contains(" 332 ") || textBuffer
-            .contains(" TOPIC "))) {
-      return true;
-    }
-    return false;
+            .contains(" TOPIC "));
   }
 }

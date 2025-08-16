@@ -20,7 +20,7 @@ public class IrcLine implements Serializable {
   private String data;
 
 
-  private long time;
+  private final long time;
 
   private String type;
 
@@ -57,6 +57,7 @@ public class IrcLine implements Serializable {
   public void setType(String type) {
     this.type = type;
   }
+  
 
   @Override
   public String toString() {
